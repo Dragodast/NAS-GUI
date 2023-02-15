@@ -1,9 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets, QtWebEngineWidgets
 import psutil
 import sys
-#python -m pip install psutil
-#python -m pip install PyQtWebEngine
-#python -m pip install PyQt5
 
 class SystemInfo(QtWidgets.QMainWindow):
     def __init__(self):
@@ -55,9 +52,16 @@ class SystemInfo(QtWidgets.QMainWindow):
 
     def update_info(self):
         cpu = psutil.cpu_percent()
-        hdd = psutil.disk_usage('/').percent
+        #hdd = psutil.disk_usage('/').percent
         mem = psutil.virtual_memory().percent
         gpu = "N/A"
         self.browser.page().runJavaScript(f"document.getElementById('cpu').innerHTML = '{cpu}%';")
-        self.browser.page().runJavaScript(f"document.getElementById('hdd').innerHTML = '{hdd}%';")
+        #self.browser.page().runJavaScript(f"document.getElementById('hdd').innerHTML = '{hdd}%';")
         self.browser.page().runJavaScript(f"document.getElementById('ram').innerHTML = '{mem}%';")
+        self.browser.page().runJavaScript(f"document.getElementById('gpu').innerHTML = '{gpu}';")
+
+if __name__ == '__main__':
+    app = QtWidgets.QApplication(sys.argv)
+    window = SystemInfo()
+    window.show()
+    sys.exit(app.exec_())
