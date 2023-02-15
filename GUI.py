@@ -5,11 +5,17 @@ import sys
 class SystemInfo(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setGeometry(320, 480, 320, 480)
+        #self.setGeometry(320, 480, 320, 480) #Na výšku
+        self.setGeometry(480, 320, 480, 320) #Na šířku
 
         self.browser = QtWebEngineWidgets.QWebEngineView(self)
         self.browser.setHtml('''
             <style>
+                body {
+                    background-image: url("bg.jpg");
+                    background-size: cover;
+                }
+            
                 .container {
                     display: flex;
                     flex-direction: column;
@@ -19,8 +25,15 @@ class SystemInfo(QtWidgets.QMainWindow):
                 .info-row {
                     display: flex;
                     justify-content: space-between;
-                    width: 80%;
+                    width: 90%;
+                    border-radius: 10px;
                     margin: 10px 0;
+                    position: absolute;
+                    bottom: 0%;
+                    padding: 1%;
+                    padding-left: 2%;
+                    padding-right: 2%;
+                    background: #b4b0b0;
                 }
 
                 .info-label {
@@ -28,27 +41,28 @@ class SystemInfo(QtWidgets.QMainWindow):
                     font-weight: bold;
                 }
             </style>
+            <body>
             <div class="container">
                 <div class="info-row">
                     <div class="info-label">CPU:</div>
                     <div id="cpu"></div>
-                </div>
-                <div class="info-row">
                     <div class="info-label">HDD:</div>
                     <div id="hdd"></div>
-                </div>
-                <div class="info-row">
                     <div class="info-label">RAM:</div>
                     <div id="ram"></div>
-                </div>
-                <div class="info-row">
                     <div class="info-label">GPU:</div>
                     <div id="gpu">N/A</div>
                 </div>
             </div>
+            </body>
         ''')
         self.browser.loadFinished.connect(self.update_info)
         self.setCentralWidget(self.browser)
+        
+        #Vytvoří QTimer objekt a spustí jej
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.update_info)
+        self.timer.start(1000)
 
     def update_info(self):
         cpu = psutil.cpu_percent()

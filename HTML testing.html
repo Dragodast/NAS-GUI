@@ -1,21 +1,38 @@
 <html>
     <style>
+        body {
+            height: 320px;
+            height: 480px;
+            background-image: url("bg.jpg");
+            background-size: cover;
+        }
+
         .container {
             display: flex;
             flex-direction: column;
             align-items: center;
         }
+
         .info-row {
             display: flex;
             justify-content: space-between;
-            width: 80%;
+            width: 90%;
+            border-radius: 10px;
             margin: 10px 0;
+            position: absolute;
+            bottom: 0%;
+            padding: 1%;
+            padding-left: 2%;
+            padding-right: 2%;
+            background: #b4b0b0;
         }
+
         .info-label {
             font-size: 20px;
             font-weight: bold;
         }
     </style>
+<body>
     <div class="container">
         <div class="info-row">
             <div class="info-label">CPU:</div>
@@ -28,4 +45,5 @@
             <div id="gpu">N/A</div>
         </div>
     </div>
+</body>
 </html>
