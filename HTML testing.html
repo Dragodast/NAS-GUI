@@ -1,49 +1,224 @@
 <html>
-    <style>
-        body {
-            height: 320px;
-            height: 480px;
-            background-image: url("bg.jpg");
-            background-size: cover;
-        }
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap" rel="stylesheet">
+            
+            <style>
+                body {
+                    background-image: url("https://cdn.discordapp.com/attachments/670638863127150592/1075695916910133308/bg.jpg");
+                    background-size: cover;
+                }
+            
+                .container {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                }
 
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+                .info-row {
+                    display: flex;
+                    justify-content: space-between;
+                    width: 90%;
+                    border-radius: 10px;
+                    margin: 10px 0;
+                    position: absolute;
+                    bottom: 0%;
+                    padding: 1%;
+                    padding-left: 2%;
+                    padding-right: 2%;
+                    background: rgba(0, 153, 255, .5);
+                    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+                }
 
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            width: 90%;
-            border-radius: 10px;
-            margin: 10px 0;
-            position: absolute;
-            bottom: 0%;
-            padding: 1%;
-            padding-left: 2%;
-            padding-right: 2%;
-            background: #b4b0b0;
-        }
+                .info-label {
+                    font-size: 20px;
+                    font-weight: bold;
+                    vertical-align: middle; 
+                    font-family: 'Roboto Condensed', sans-serif;
+                    color: #c9c9c9;
+                }
+                
+                .info-status {
+                    font-size: 20px;
+                    vertical-align: middle; 
+                    font-family: 'Roboto Condensed', sans-serif;
+                    color: #c9c9c9;
+                }
+                
+                .divider {
+                  border-left: 2px solid #c9c9c9;
+                  height: 23px;
+                  vertical-align: middle;
+                }
 
-        .info-label {
-            font-size: 20px;
-            font-weight: bold;
-        }
-    </style>
-<body>
-    <div class="container">
-        <div class="info-row">
-            <div class="info-label">CPU:</div>
-            <div id="cpu"></div>
-            <div class="info-label">HDD:</div>
-            <div id="hdd"></div>
-            <div class="info-label">RAM:</div>
-            <div id="ram"></div>
-            <div class="info-label">GPU:</div>
-            <div id="gpu">N/A</div>
-        </div>
-    </div>
-</body>
+                /*------*/
+                /* HDDs */
+                /*------*/
+
+                .HDD1 {
+                    display: grid;
+                    width: 90%;
+                    border-radius: 10px;
+                    margin: 10px 0;
+                    position: absolute;
+                    bottom: 10%;
+                    padding: 2%;
+                    background: rgba(0, 153, 255, .5);
+                    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+                }
+
+                .HDD2 {
+                    display: grid;
+                    width: 90%;
+                    border-radius: 10px;
+                    margin: 10px 0;
+                    position: absolute;
+                    bottom: 25%;
+                    padding: 2%;
+                    background: rgba(0, 153, 255, .5);
+                    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+                }
+
+                .HDD3 {
+                    display: grid;
+                    width: 90%;
+                    border-radius: 10px;
+                    margin: 10px 0;
+                    position: absolute;
+                    bottom: 40%;
+                    padding: 2%;
+                    background: rgba(0, 153, 255, .5);
+                    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+                }
+
+                .HDD-Texts {
+                    display: flex;
+                    justify-content: start;
+                    margin: 5px 0;
+                }
+
+                .divider-hdds {
+                  margin-left: 20px;
+                  margin-right: 20px;
+                  border: 1px solid #c9c9c9;
+                  height: 23px;
+                  vertical-align: middle;
+                }
+
+                .info-hdds {
+                    font-size: 20px;
+                    font-weight: bold;
+                    padding-left: 5px;
+                    padding-right: 5px;
+                    padding-bottom: 10px;
+                    vertical-align: middle; 
+                    font-family: 'Roboto Condensed', sans-serif;
+                    color: #c9c9c9;
+                }
+
+                .HDD-Bar {
+                    display: flex;
+                    width: 100%;
+                    height: 30px;
+                    border-radius: 10px;
+                    background-color: rgba(102, 102, 102, .8);
+                }
+
+                .HDD-Bar-Fill {
+                    display: flex;
+                    width: 40%;
+                    height: 30px;
+                    border-radius: 10px;
+                    background-color: rgb(182, 0, 0);
+                }
+                
+                .HDD-Text-Procenta {
+                    width: 90%;
+                    height: 100%;
+                    padding-top: 1%;
+                    position: fixed;
+                    vertical-align: middle;
+                    text-align: center;
+                    font-size: 15px;
+                    font-weight: bold;
+                    font-family: 'Roboto Condensed', sans-serif;
+                    color: #c9c9c9;
+                }
+                
+            </style>
+            <body>
+            <div class="container">
+                <div class="HDD1">
+                    <div class="HDD-Texts">
+                        <div class="info-hdds">Disk </div>
+                        <div class='info-status' id="NameHDD1"></div>
+                        <div class="divider-hdds"></div>
+                        <div class="info-hdds">Kapacita </div>
+                        <div class='info-status' id="UsedHDD1"></div>
+                        <div class="info-hdds"> / </div>
+                        <div class='info-status' id="MaxHDD1"></div>
+                        <div class="divider-hdds"></div>
+                        <div class="info-hdds">Využití </div>
+                        <div class='info-status' id="UsageHDD1"></div>
+                    </div>
+                    <div class="HDD-Bar">
+                        <div class="HDD-Bar-Fill">
+                            <div class="HDD-Text-Procenta" id="Procenta1">0/100 %</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="HDD2">
+                    <div class="HDD-Texts">
+                        <div class="info-hdds">Disk </div>
+                        <div class='info-status' id="NameHDD2"></div>
+                        <div class="divider-hdds"></div>
+                        <div class="info-hdds">Kapacita </div>
+                        <div class='info-status' id="UsedHDD2"></div>
+                        <div class="info-hdds"> / </div>
+                        <div class='info-status' id="MaxHDD2"></div>
+                        <div class="divider-hdds"></div>
+                        <div class="info-hdds">Využití </div>
+                        <div class='info-status' id="UsageHDD2"></div>
+                    </div>
+                    <div class="HDD-Bar">
+                        <div class="HDD-Bar-Fill">
+                            <div class="HDD-Text-Procenta" id="Procenta2">0/100 %</div>
+                        </div>
+                    </div>
+                </div>    
+                <div class="HDD3">
+                    <div class="HDD-Texts">
+                        <div class="info-hdds">Disk </div>
+                        <div class='info-status' id="NameHDD2"></div>
+                        <div class="divider-hdds"></div>
+                        <div class="info-hdds">Kapacita </div>
+                        <div class='info-status' id="UsedHDD2"></div>
+                        <div class="info-hdds"> / </div>
+                        <div class='info-status' id="MaxHDD2"></div>
+                        <div class="divider-hdds"></div>
+                        <div class="info-hdds">Využití </div>
+                        <div class='info-status' id="UsageHDD2"></div>
+                    </div>
+                    <div class="HDD-Bar">
+                        <div class="HDD-Bar-Fill">
+                            <div class="HDD-Text-Procenta" id="Procenta2">0/100 %</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">CPU</div>
+                    <div class="info-status" id="cpu"></div>
+                    <div class="divider"></div>
+                    <div class="info-label">HDD</div>
+                    <div class="info-status" id="hdd"></div>
+                    <div class="divider"></div>
+                    <div class="info-label">RAM</div>
+                    <div class="info-status" id="ram"></div>
+                    <div class="divider"></div>
+                    <div class="info-label">FAN</div>
+                    <div class="info-status" id="fan">N/A</div>
+                </div>
+            </div>
+            </body>
 </html>
