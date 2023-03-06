@@ -1,15 +1,29 @@
+# -*- coding: utf-8 -*-
 from PyQt5 import QtCore, QtGui, QtWidgets, QtWebEngineWidgets
 from PyQt5.QtGui import QColor, QPainter, QPixmap
 from PyQt5.QtWidgets import QMainWindow, QLabel, QPushButton, QApplication, QGraphicsDropShadowEffect, QWidget
+import RPi.GPIO as GPIO
 import subprocess
 import psutil
 import sys
+import time
+
+TACH = 16
+PULSE = 2
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+GPIO.setup(TACH, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+t = time.time()
+rpm = 0
+fan = 'N/A'
 
 class SystemInfo(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
-        #self.setGeometry(320, 480, 320, 480) #Na výšku
-        self.setGeometry(480, 320, 480, 320) #Na šířku
+        #self.setGeometry(320, 480, 320, 480) #Na vysku
+        self.setGeometry(480, 320, 480, 320) #Na sirku
 
         self.browser = QtWebEngineWidgets.QWebEngineView(self)
         self.browser.setHtml('''
@@ -65,8 +79,8 @@ class SystemInfo(QtWidgets.QMainWindow):
                   vertical-align: middle;
                 }
 
-                /*------*/
-                /* HDDs */
+                  /*------*/
+                 /* HDDs */
                 /*------*/
 
                 .HDD1 {
@@ -120,11 +134,11 @@ class SystemInfo(QtWidgets.QMainWindow):
                 }
 
                 .info-hdds {
-                    font-size: 12px;
+                    font-size: 14px;
                     font-weight: bold;
-                    padding-left: 5px;
-                    padding-right: 5px;
-                    padding-bottom: 8px;
+                    padding-left: 2px;
+                    padding-right: 2px;
+                    padding-bottom: 4px;
                     vertical-align: middle; 
                     font-family: 'Roboto Condensed', sans-serif;
                     color: #c9c9c9;
@@ -140,7 +154,8 @@ class SystemInfo(QtWidgets.QMainWindow):
 
                 .HDD-Bar-Fill {
                     display: flex;
-                    width: 40%;
+                    width: 100%;
+                    max-width: 100%;
                     height: 15px;
                     border-radius: 10px;
                     background-color: rgb(182, 133, 0);
@@ -148,7 +163,8 @@ class SystemInfo(QtWidgets.QMainWindow):
                 
                 .HDD-Bar-Fill2 {
                     display: flex;
-                    width: 20%;
+                    width: 100%;
+                    max-width: 100%;
                     height: 15px;
                     border-radius: 10px;
                     background-color: rgb(6, 182, 0);
@@ -156,27 +172,33 @@ class SystemInfo(QtWidgets.QMainWindow):
                 
                 .HDD-Bar-Fill3 {
                     display: flex;
-                    width: 90%;
+                    width: 100%;
+                    max-width: 100%;
                     height: 15px;
                     border-radius: 10px;
                     background-color: rgb(182, 0, 0);
                 }
                 
+                      /*----------*/
+                     /*Start BODY*/
+                    /*----------*/
+                
             </style>
+            
             <body>
             <div class="container">
                 <div class="HDD1">
                     <div class="HDD-Texts">
                         <div class="info-hdds">Disk </div>
-                        <div class='info-status' id="NameHDD1"></div>
+                        <div class='info-hdds' id="NameHDD1"></div>
                         <div class="divider-hdds"></div>
                         <div class="info-hdds">Kapacita </div>
-                        <div class='info-status' id="UsedHDD1"></div>
+                        <div class='info-hdds' id="UsedHDD1"></div>
                         <div class="info-hdds"> / </div>
-                        <div class='info-status' id="MaxHDD1"></div>
+                        <div class='info-hdds' id="MaxHDD1"></div>
                         <div class="divider-hdds"></div>
-                        <div class="info-hdds">Využití </div>
-                        <div class='info-status' id="UsageHDD1"></div>
+                        <div class="info-hdds">Volné místo </div>
+                        <div class='info-hdds' id="FreeHDD1"></div>
                     </div>
                     <div class="HDD-Bar">
                         <div class="HDD-Bar-Fill"></div>
@@ -185,15 +207,15 @@ class SystemInfo(QtWidgets.QMainWindow):
                 <div class="HDD2">
                     <div class="HDD-Texts">
                         <div class="info-hdds">Disk </div>
-                        <div class='info-status' id="NameHDD2"></div>
+                        <div class='info-hdds' id="NameHDD2"></div>
                         <div class="divider-hdds"></div>
                         <div class="info-hdds">Kapacita </div>
-                        <div class='info-status' id="UsedHDD2"></div>
+                        <div class='info-hdds' id="UsedHDD2"></div>
                         <div class="info-hdds"> / </div>
-                        <div class='info-status' id="MaxHDD2"></div>
+                        <div class='info-hdds' id="MaxHDD2"></div>
                         <div class="divider-hdds"></div>
-                        <div class="info-hdds">Využití </div>
-                        <div class='info-status' id="UsageHDD2"></div>
+                        <div class="info-hdds">Volné místo </div>
+                        <div class='info-hdds' id="FreeHDD2"></div>
                     </div>
                     <div class="HDD-Bar">
                         <div class="HDD-Bar-Fill2"></div>
@@ -202,15 +224,15 @@ class SystemInfo(QtWidgets.QMainWindow):
                 <div class="HDD3">
                     <div class="HDD-Texts">
                         <div class="info-hdds">Disk </div>
-                        <div class='info-status' id="NameHDD2"></div>
+                        <div class='info-hdds' id="NameHDD3"></div>
                         <div class="divider-hdds"></div>
                         <div class="info-hdds">Kapacita </div>
-                        <div class='info-status' id="UsedHDD2"></div>
+                        <div class='info-hdds' id="UsedHDD3"></div>
                         <div class="info-hdds"> / </div>
-                        <div class='info-status' id="MaxHDD2"></div>
+                        <div class='info-hdds' id="MaxHDD3"></div>
                         <div class="divider-hdds"></div>
-                        <div class="info-hdds">Využití </div>
-                        <div class='info-status' id="UsageHDD2"></div>
+                        <div class="info-hdds">Volné místo </div>
+                        <div class='info-hdds' id="FreeHDD3"></div>
                     </div>
                     <div class="HDD-Bar">
                         <div class="HDD-Bar-Fill3"></div>
@@ -236,13 +258,21 @@ class SystemInfo(QtWidgets.QMainWindow):
         self.browser.loadFinished.connect(self.update_info)
         self.setCentralWidget(self.browser)
         
-        #Vytvoří QTimer objekt a spustí jej
+        #Vytvori QTimer objekt a spustí jej
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.update_info)
+        self.timer.timeout.connect(self.update_disk1)
+        self.timer.timeout.connect(self.update_disk2)
+        self.timer.timeout.connect(self.update_disk3)
         self.timer.start(1000)
         
+        self.fantimer = QtCore.QTimer()
+        self.fantimer.timeout.connect(self.update_fan)
+        self.fantimer.start(1)
+        
+        
 ##########################################################################
-## Tlačítka
+## Tlacitka
 ##########################################################################
         
         shadow = QGraphicsDropShadowEffect(self)
@@ -345,14 +375,93 @@ class SystemInfo(QtWidgets.QMainWindow):
 
     def update_info(self):
         cpu = psutil.cpu_percent()
-        sd = "N/A" 
-        #sd = psutil.disk_usage('/').percent
+        sd = psutil.disk_usage('/').percent
         mem = psutil.virtual_memory().percent
-        fan = "N/A"
+        
+        global fan
+        
         self.browser.page().runJavaScript(f"document.getElementById('cpu').innerHTML = '{cpu}%';")
         self.browser.page().runJavaScript(f"document.getElementById('sd').innerHTML = '{sd}%';")
         self.browser.page().runJavaScript(f"document.getElementById('ram').innerHTML = '{mem}%';")
         self.browser.page().runJavaScript(f"document.getElementById('fan').innerHTML = '{fan} RPM';")
+
+            
+    def update_fan(self):
+        global t
+        global rpm
+        global fan
+        dt = time.time() - t
+        if dt < 0.005: return
+        
+        freq = 1 / dt
+        fan = round((freq / PULSE) * 60)
+        t = time.time()
+                
+    def update_disk1(self):
+        HDD1Name = '/'
+        HDD1Show = 'SD Karta'
+        if HDD1Name != 'není':
+            HDD1Usage = round(psutil.disk_usage(HDD1Name).used / 1024 / 1024 / 1024)
+            HDD1Max = round(psutil.disk_usage(HDD1Name).total / 1024 / 1024 / 1024)
+            HDD1Free = round(psutil.disk_usage(HDD1Name).free / 1024 / 1024 / 1024)
+            HDD1Percentage = psutil.disk_usage(HDD1Name).percent
+            HDD1PercentageCSS = f"{HDD1Percentage}%"
+        else:
+            HDD1Usage = '0'
+            HDD1Max = '0'
+            HDD1Free = '0'
+            HDD1Percentage = '0'
+            HDD1PercentageCSS = f"{HDD1Percentage}%"
+            
+        self.browser.page().runJavaScript(f"document.getElementsByClassName('HDD-Bar-Fill')[0].style.width = '{HDD1PercentageCSS}';")
+        self.browser.page().runJavaScript(f"document.getElementById('NameHDD1').innerHTML = '{HDD1Show}';")
+        self.browser.page().runJavaScript(f"document.getElementById('UsedHDD1').innerHTML = '{HDD1Usage}';")
+        self.browser.page().runJavaScript(f"document.getElementById('MaxHDD1').innerHTML = '{HDD1Max} GB';")
+        self.browser.page().runJavaScript(f"document.getElementById('FreeHDD1').innerHTML = '{HDD1Free} GB';")
+        
+    def update_disk2(self):
+        HDD2Name = "/srv/dev-disk-by-uuid-e27509e5-ef7b-491d-af4a-1bd9e3f60386"
+        HDD2Show = 'SSD Kingston'
+        if HDD2Name != 'není':
+            HDD2Usage = round(psutil.disk_usage(HDD2Name).used / 1024 / 1024 / 1024)
+            HDD2Max = round(psutil.disk_usage(HDD2Name).total / 1024 / 1024 / 1024)
+            HDD2Free = round(psutil.disk_usage(HDD2Name).free / 1024 / 1024 / 1024)
+            HDD2Percentage = psutil.disk_usage(HDD2Name).percent
+            HDD2PercentageCSS = f"{HDD2Percentage}%"
+        else:
+            HDD2Usage = '0'
+            HDD2Max = '0'
+            HDD2Free = '0'
+            HDD2Percentage = '0'
+            HDD2PercentageCSS = f"{HDD2Percentage}%"
+            
+        self.browser.page().runJavaScript(f"document.getElementsByClassName('HDD-Bar-Fill2')[0].style.width = '{HDD2PercentageCSS}';")
+        self.browser.page().runJavaScript(f"document.getElementById('NameHDD2').innerHTML = '{HDD2Show}';")
+        self.browser.page().runJavaScript(f"document.getElementById('UsedHDD2').innerHTML = '{HDD2Usage}';")
+        self.browser.page().runJavaScript(f"document.getElementById('MaxHDD2').innerHTML = '{HDD2Max} GB';")
+        self.browser.page().runJavaScript(f"document.getElementById('FreeHDD2').innerHTML = '{HDD2Free} GB';")
+    
+    def update_disk3(self):
+        HDD3Name = 'není'
+        HDD3Show = 'není'
+        if HDD3Name != 'není':
+            HDD3Usage = round(psutil.disk_usage(HDD3Name).used / 1024 / 1024 / 1024)
+            HDD3Max = round(psutil.disk_usage(HDD3Name).total / 1024 / 1024 / 1024)
+            HDD3Free = round(psutil.disk_usage(HDD3Name).free / 1024 / 1024 / 1024)
+            HDD3Percentage = psutil.disk_usage(HDD3Name).percent
+            HDD3PercentageCSS = f"{HDD3Percentage}%"
+        else:
+            HDD3Usage = '0'
+            HDD3Max = '0'
+            HDD3Free = '0'
+            HDD3Percentage = '0'
+            HDD3PercentageCSS = f"{HDD3Percentage}%"
+        self.browser.page().runJavaScript(f"document.getElementsByClassName('HDD-Bar-Fill3')[0].style.width = '{HDD3PercentageCSS}';")
+        self.browser.page().runJavaScript(f"document.getElementById('NameHDD3').innerHTML = '{HDD3Show}';")
+        self.browser.page().runJavaScript(f"document.getElementById('UsedHDD3').innerHTML = '{HDD3Usage}';")
+        self.browser.page().runJavaScript(f"document.getElementById('MaxHDD3').innerHTML = '{HDD3Max} GB';")
+        self.browser.page().runJavaScript(f"document.getElementById('FreeHDD3').innerHTML = '{HDD3Free} GB';")
+        
         
 ############################################################################
 
